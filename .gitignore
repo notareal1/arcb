@@ -1,0 +1,23 @@
+# Build artifacts
+/target
+/fuzz/target/
+
+# Rust
+**/*.rs.bk
+*.pdb
+
+# IDE / editor
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Backup / temporary
+*.bak
+*.tmp
+*.orig
