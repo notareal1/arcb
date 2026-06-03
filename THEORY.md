@@ -1,5 +1,34 @@
 # ARCB Theory of Operation
 
+## 0. Context: ARCB vs FSE/ANS
+
+ARCB is **not** a new entropy coding algorithm. It is a **domain-specific
+compression scheme** for decimal digit strings.
+
+| Aspect | FSE / ANS | ARCB |
+|---|---|---|
+| Type | General entropy coder | Domain-specific compressor |
+| Input | Any byte sequence | Decimal digits only |
+| Core technique | Table-based state machine | Two-group decomposition + adaptive range coding |
+| Speed | Very fast (table lookup) | Slower (range coding) |
+| Use case | Production (zstd, etc.) | Educational / learning |
+
+**FSE** (Finite State Entropy) and **ANS** (Asymmetric Numerical Systems) are
+state-of-the-art entropy coding methods used in production compressors like
+zstd. They use lookup tables for fast encode/decode and achieve near-optimal
+compression on any data.
+
+**ARCB** uses simpler range coding (via the `constriction` crate) combined with
+a two-group decomposition specific to decimal alphabets (digits 0-9 split into
+groups of 8 and 2). This decomposition only makes sense for base-10 digits and
+cannot be generalised.
+
+**When to use ARCB:** Learning, experimentation, or when you specifically need
+to compress decimal digit strings and want to understand entropy coding.
+
+**When NOT to use ARCB:** For production workloads, general data compression,
+or when speed matters. Use zstd/gzip/brotli instead.
+
 ## 1. Problem Statement
 
 Given a string of N decimal digits d1 d2 ... dN where each di in {0,1,...,9},

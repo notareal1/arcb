@@ -5,8 +5,28 @@
 
 **ARCB** is a lossless compression library specialised for decimal digit strings
 (`0`–`9`). It approaches the theoretical entropy limit of **~3.322 bits/digit**
-even on uniformly random data, beating general-purpose compressors like gzip on
-this specific domain.
+even on uniformly random data.
+
+## Disclaimer
+
+**This is a learning/educational project, not intended for production use.**
+
+ARCB demonstrates entropy coding concepts — adaptive binary models, range coding,
+and domain-specific compression for decimal alphabets. It works correctly and
+achieves near-optimal compression ratios on random decimal data.
+
+However, for real-world use, general-purpose compressors like **zstd**, **gzip**,
+or **brotli** are faster, more versatile, and better supported. ARCB only
+compresses decimal digit strings and has no advantage over standard tools for
+general data.
+
+## Credits
+
+- **Concept and idea:** notareal1
+- **Implementation:** [OWL](https://github.com/your-owl-link) (AI assistant by ZOO company)
+- **AI-assisted development:** This project was designed and built with AI support.
+  The core algorithm was conceived by the author; implementation, testing, and
+  optimization were done collaboratively with AI.
 
 ## Installation
 
@@ -109,18 +129,21 @@ let text = decode_from_base64(&b64).unwrap();
 
 ## Compression Performance
 
-Measured on 100 000 digits, single thread, release mode:
+Measured on 65 535 random decimal digits, single thread, release mode:
 
-| Data pattern | ARCB bits/digit | gzip -9 | ARCB vs gzip |
+| Method | Bits/digit | Encode (MB/s) | Decode (MB/s) |
 |---|---|---|---|
-| Uniform random 0-9 | 3.33 | 3.92 | **-15%** |
-| All zeros | 0.001 | 0.07 | **-99%** |
-| All same digit | 0.001 | 0.07 | **-99%** |
-| Biased 70/30 | 2.89 | 3.41 | **-15%** |
-| Repeating 0-9 | 0.40 | 0.01 | gzip wins (LZ77) |
+| ARCB (raw Small) | **3.324** | 90.3 | 76.4 |
+| ARCB (adaptive) | 3.325 | — | — |
+| gzip -9 | 3.920 | 23.9 | **458.4** |
+| bzip2 -9 | 3.460 | 21.0 | 42.9 |
+| Shannon limit | 3.322 | — | — |
 
-ARCB excels on random or semi-random digit data. For highly patterned data
-(e.g. repeated sequences), gzip's LZ77 dictionary coding is superior.
+**Key takeaways:**
+- ARCB achieves near-optimal compression (~0.1% above Shannon limit)
+- ARCB encodes ~3-4x faster than gzip/bzip2
+- ARCB decodes ~6x slower than gzip
+- For general-purpose compression, use zstd/gzip/brotli instead
 
 ## How It Works
 
