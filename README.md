@@ -8,7 +8,45 @@
 even on uniformly random data, beating general-purpose compressors like gzip on
 this specific domain.
 
-## Quick Start
+## Installation
+
+### Option 1: Install via cargo (requires [Rust](https://rust-lang.org))
+
+```bash
+cargo install --git https://github.com/notareal1/arcb.git
+```
+
+This installs the `arcb` CLI tool. Then use it directly:
+
+```bash
+arcb compress input.txt -o output.arcb
+arcb decompress output.arcb -o recovered.txt
+arcb stats input.txt
+```
+
+### Option 2: Download pre-built binary
+
+Go to [Releases](https://github.com/notareal1/arcb/releases) and download the
+binary for your platform (Windows, macOS, Linux). No Rust installation needed.
+
+### Option 3: Build from source
+
+```bash
+git clone https://github.com/notareal1/arcb.git
+cd arcb
+cargo build --release
+```
+
+The binary is at `target/release/arcb`.
+
+## Quick Start (Rust library)
+
+Add to your `Cargo.toml`:
+
+```toml
+[dependencies]
+arcb = { git = "https://github.com/notareal1/arcb.git" }
+```
 
 ```rust
 use arcb::{ArcbEncoder, decode_block};
@@ -23,29 +61,20 @@ let decoded = decode_block(&compressed).unwrap();
 assert_eq!(&decoded, &[8, 3, 9, 1, 0, 2, 7, 4, 6, 5]);
 ```
 
-## Building
-
-```bash
-git clone https://github.com/notareal1/arcb.git
-cd arcb
-cargo build --release
-cargo test
-```
-
 ## CLI Usage
 
 ```bash
-# Compress
+# Compress a file
 arcb compress input.txt -o output.arcb
 
 # Decompress
 arcb decompress output.arcb -o recovered.txt
 
-# Show statistics
+# Show compression statistics
 arcb stats input.txt
 ```
 
-## API
+## Library API
 
 ### Encoding
 
@@ -63,7 +92,7 @@ let mut enc = ArcbEncoder::with_options(
     CompressOptions::new().with_compress_small(true),
 );
 
-// File-level API
+// File-level API (with magic + version + optional CRC-32)
 let binary = encode_to_binary("1234567890").unwrap();
 let b64 = encode_to_base64("1234567890").unwrap();
 ```
@@ -103,10 +132,11 @@ ARCB splits each decimal digit into two groups:
 The Small/Large mask itself is compressed with an adaptive binary-range coder.
 See [THEORY.md](THEORY.md) for the full mathematical treatment.
 
-## Running Benchmarks
+## Running Tests & Benchmarks
 
 ```bash
-cargo bench
+cargo test          # 70 tests
+cargo bench         # Criterion benchmarks
 ```
 
 ## License
