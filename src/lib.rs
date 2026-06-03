@@ -20,7 +20,6 @@
 //! ```
 
 mod adaptive_model;
-// mod bitstream; // removed: dead code, unused
 mod decoder;
 mod encoder;
 mod error;
